@@ -7,7 +7,8 @@
       :rules="loginRules"
     >
       <div class="title-container">
-        <h3 class="title">用户登录</h3>
+        <h3 class="title">{{ $t('msg.login.title') }}</h3>
+        <lang-select class="lang-select" effect="light" />
       </div>
       <!-- username -->
       <el-form-item prop="username">
@@ -19,7 +20,7 @@
           v-model="loginForm.username"
           name="username"
           type="text"
-        ></el-input>
+        />
       </el-form-item>
       <!-- password -->
       <el-form-item prop="password">
@@ -31,7 +32,7 @@
           v-model="loginForm.password"
           name="password"
           :type="passwordType"
-        ></el-input>
+        />
         <span class="show-pwd">
           <svg-icon
             :icon="passwordType === 'password' ? 'eye' : 'eye-open'"
@@ -41,12 +42,15 @@
       </el-form-item>
       <!-- 登陆按钮 -->
       <el-button
+        size="large"
         type="primary"
         style="width: 100%; margin-bottom: 30px"
         :loading="loading"
         @click="handleLogin"
-        >登录</el-button
+        >{{ $t('msg.login.loginBtn') }}</el-button
       >
+
+      <div class="tips" v-html="$t('msg.login.desc')"></div>
     </el-form>
   </div>
 </template>
@@ -55,18 +59,21 @@
 import { ref } from 'vue'
 import { validatePassword } from './rules'
 import { useStore } from 'vuex'
-import router from '@/router/'
+import { useRouter } from 'vue-router'
+import LangSelect from '@/components/LangSelect'
+import { useI18n } from 'vue-i18n'
 const loginForm = ref({
   username: 'super-admin',
   password: '123456'
 })
+const i18n = useI18n()
 // 验证规则
 const loginRules = ref({
   username: [
     {
       required: true,
       trigger: 'blur',
-      message: '用户名为必填项'
+      message: i18n.t('msg.login.usernameRule')
     }
   ],
   password: [
@@ -92,6 +99,8 @@ const onChangePwdType = () => {
 const loading = ref(false)
 const loginFromRef = ref(null)
 const store = useStore()
+
+const router = useRouter()
 const handleLogin = () => {
   loginFromRef.value.validate((valid) => {
     if (!valid) return
@@ -123,6 +132,16 @@ $cursor: #fff;
   background-color: $bg;
   overflow: hidden;
 
+  .lang-select {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 22px;
+    background-color: #fff;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
   .login-form {
     position: relative;
     width: 520px;
@@ -131,6 +150,21 @@ $cursor: #fff;
     margin: 0 auto;
     overflow: hidden;
 
+    ::v-deep .el-input__wrapper {
+      display: block;
+      background-color: transparent;
+      box-shadow: none !important;
+    }
+    ::v-deep .el-input__wrapper:hover,
+    ::v-deep .el-input__wrapper.is-focus {
+      box-shadow: none;
+    }
+    .el-form-item {
+      margin-bottom: 20px;
+      ::v-deep .el-form-item__error {
+        top: 105%;
+      }
+    }
     ::v-deep .el-form-item {
       border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(0, 0, 0, 0.1);
@@ -153,6 +187,12 @@ $cursor: #fff;
         height: 47px;
         caret-color: $cursor;
       }
+    }
+    .tips {
+      font-size: 16px;
+      color: #fff;
+      line-height: 20px;
+      text-align: left;
     }
   }
 

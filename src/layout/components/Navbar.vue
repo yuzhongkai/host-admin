@@ -1,6 +1,15 @@
 <template>
   <div class="navbar">
+    <hamburger class="hamburger-container" />
+
+    <breadcrumb id="guide-breadcrumb" class="breadcrumb-container" />
+
     <div class="right-menu">
+      <guide class="right-menu-item hover-effect" />
+      <header-search class="right-menu-item hover-effect"></header-search>
+      <screenfull class="right-menu-item hover-effect"></screenfull>
+      <theme-picker class="right-menu-item hover-effect"></theme-picker>
+      <lang-select class="right-menu-item hover-effect"></lang-select>
       <!-- 头像 -->
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
@@ -14,12 +23,14 @@
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
             <router-link to="/">
-              <el-dropdown-item> 首页 </el-dropdown-item>
+              <el-dropdown-item>{{ $t('msg.navBar.home') }}</el-dropdown-item>
             </router-link>
             <a target="_blank" href="">
-              <el-dropdown-item>课程主页</el-dropdown-item>
+              <el-dropdown-item>{{ $t('msg.navBar.course') }}</el-dropdown-item>
             </a>
-            <el-dropdown-item divided> 退出登录 </el-dropdown-item>
+            <el-dropdown-item divided @click="logout">
+              {{ $t('msg.navBar.logout') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -28,7 +39,19 @@
 </template>
 
 <script setup>
-import {} from 'vue'
+import { useStore } from 'vuex'
+import HeaderSearch from '@/components/HeaderSearch'
+import Screenfull from '@/components/Screenfull'
+import Hamburger from '@/components/Hamburger'
+import Breadcrumb from '@/components/Breadcrumb'
+import LangSelect from '@/components/LangSelect'
+import ThemePicker from '@/components/ThemeSelect'
+import Guide from '@/components/Guide'
+
+const store = useStore()
+const logout = (context) => {
+  store.dispatch('user/logout')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -39,11 +62,39 @@ import {} from 'vue'
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
+  .hamburger-container {
+    float: left;
+    height: 100%;
+    line-height: 46px;
+    cursor: pointer;
+    // hover 动画
+    transition: background 0.5s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .breadcrumb-container {
+    float: left;
+  }
+
   .right-menu {
     display: flex;
     align-items: center;
     float: right;
     padding-right: 16px;
+
+    ::v-deep .right-menu-item {
+      display: inline-block;
+      padding: 0 18px 0 0;
+      font-size: 24px;
+      color: #5a5e66;
+      vertical-align: text-bottom;
+      &.hover-effect {
+        cursor: pointer;
+      }
+    }
 
     ::v-deep .avatar-container {
       cursor: pointer;
